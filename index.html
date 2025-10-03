@@ -10,22 +10,38 @@
             margin: 0;
             padding: 20px;
             text-align: center;
+            min-height: 100vh;
         }
         .container {
             max-width: 500px;
             margin: 50px auto;
-            background: rgba(30, 30, 46, 0.9);
+            background: rgba(30, 30, 46, 0.95);
             padding: 30px;
             border-radius: 15px;
             border: 1px solid #444;
-            box-shadow: 0 0 20px rgba(0, 100, 255, 0.3);
+            box-shadow: 0 0 30px rgba(0, 100, 255, 0.4);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            color: #0066ff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 100, 255, 0.5);
+        }
+        .step {
+            background: rgba(40, 40, 60, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #0066ff;
+            text-align: left;
         }
         input, button {
-            padding: 12px;
-            margin: 10px;
+            padding: 12px 15px;
+            margin: 8px;
             border: none;
             border-radius: 8px;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
         input {
             width: 80%;
@@ -33,97 +49,209 @@
             color: white;
             border: 1px solid #444;
         }
+        input:focus {
+            outline: none;
+            border-color: #0066ff;
+            box-shadow: 0 0 10px rgba(0, 100, 255, 0.3);
+        }
         button {
             background: linear-gradient(45deg, #0066ff, #0099ff);
             color: white;
             cursor: pointer;
-            transition: 0.3s;
+            font-weight: bold;
         }
         button:hover {
             background: linear-gradient(45deg, #0099ff, #0066ff);
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 100, 255, 0.4);
         }
         .key {
             background: #2a2a3a;
             padding: 15px;
             border-radius: 8px;
-            margin: 10px 0;
-            font-family: monospace;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
             border: 1px solid #444;
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ff88;
         }
         .status {
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             margin: 10px 0;
+            font-weight: bold;
         }
-        .valid { background: #1a3a1a; border: 1px solid #2a8a2a; }
-        .invalid { background: #3a1a1a; border: 1px solid #8a2a2a; }
+        .valid { 
+            background: rgba(0, 255, 100, 0.2); 
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+        .invalid { 
+            background: rgba(255, 50, 50, 0.2); 
+            border: 1px solid #ff4444;
+            color: #ff4444;
+        }
+        .info {
+            background: rgba(0, 100, 255, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #0066ff;
+        }
+        .hwid-box {
+            background: #2a2a3a;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #444;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hwid-box:hover {
+            background: #3a3a4a;
+            border-color: #0066ff;
+        }
+        .copy-btn {
+            background: rgba(0, 100, 255, 0.3);
+            border: 1px solid #0066ff;
+            padding: 8px 15px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🔐 Federal.LOL Key System</h1>
-        <p>Generate your access key below:</p>
+        <p style="color: #cccccc; margin-bottom: 30px;">Professional Cheat Authentication</p>
         
-        <div>
-            <input type="text" id="hwidInput" placeholder="Enter HWID (from console)" readonly>
-            <button onclick="generateKey()">Generate Key</button>
-        </div>
-        
-        <div id="keyDisplay" style="display: none;">
-            <h3>Your Key:</h3>
-            <div class="key" id="generatedKey"></div>
-            <p>Copy this key and use it in the script</p>
+        <!-- Step 1: Generate HWID -->
+        <div class="step">
+            <h3>Step 1: Get Your HWID</h3>
+            <p>Click the button below to generate your unique Hardware ID:</p>
+            <button onclick="generateHWID()">Generate HWID</button>
+            <div id="hwidDisplay" style="display: none; margin-top: 15px;">
+                <p>Your HWID:</p>
+                <div class="hwid-box" id="hwidOutput" onclick="copyHWID()">
+                    <span id="hwidText"></span>
+                    <button class="copy-btn" onclick="copyHWID()">Copy</button>
+                </div>
+                <p style="font-size: 12px; color: #888;">Click to copy HWID</p>
+            </div>
         </div>
 
-        <div>
-            <h3>Verify Key:</h3>
-            <input type="text" id="verifyKeyInput" placeholder="Paste key to verify">
+        <!-- Step 2: Generate Key -->
+        <div class="step">
+            <h3>Step 2: Generate Key</h3>
+            <p>Click below to create your access key:</p>
+            <button onclick="generateKey()" id="generateKeyBtn" disabled>Generate Key</button>
+            
+            <div id="keyDisplay" style="display: none; margin-top: 15px;">
+                <p>Your Access Key:</p>
+                <div class="key" id="generatedKey"></div>
+                <p style="color: #00ff88;">✅ Key generated! Use this in the script.</p>
+            </div>
+        </div>
+
+        <!-- Step 3: Verify Key -->
+        <div class="step">
+            <h3>Step 3: Verify Key</h3>
+            <p>Test if your key works:</p>
+            <input type="text" id="verifyKeyInput" placeholder="Paste your key here">
             <button onclick="verifyKey()">Verify Key</button>
             <div id="verifyStatus"></div>
+        </div>
+
+        <!-- Test Keys -->
+        <div class="info">
+            <h4>🔧 Test Keys (For Development):</h4>
+            <p style="font-family: monospace; margin: 5px 0;">FEDERAL-TEST-KEY-123</p>
+            <p style="font-family: monospace; margin: 5px 0;">FEDERAL-LOL-BETA</p>
+            <p style="font-family: monospace; margin: 5px 0;">FEDERAL-FREE-ACCESS</p>
         </div>
     </div>
 
     <script>
-        // Simple key generation using HWID + timestamp
+        let userHWID = '';
+        
+        function generateHWID() {
+            // Generate a random HWID (in real script this comes from Roblox)
+            const randomId = Math.random().toString(36).substring(2, 10).toUpperCase();
+            const timestamp = Date.now().toString(36).substring(4, 8).toUpperCase();
+            userHWID = 'FED-' + randomId + '-' + timestamp;
+            
+            document.getElementById('hwidText').textContent = userHWID;
+            document.getElementById('hwidDisplay').style.display = 'block';
+            document.getElementById('generateKeyBtn').disabled = false;
+            
+            // Store in localStorage
+            localStorage.setItem('federal_hwid', userHWID);
+        }
+        
+        function copyHWID() {
+            navigator.clipboard.writeText(userHWID).then(function() {
+                alert('HWID copied to clipboard!');
+            });
+        }
+        
         function generateKey() {
-            const hwid = document.getElementById('hwidInput').value;
-            if (!hwid) {
-                alert('Please get HWID from script first');
+            if (!userHWID) {
+                alert('Please generate HWID first');
                 return;
             }
             
+            // Create a key based on HWID + timestamp
             const timestamp = Date.now();
-            const key = btoa(hwid + '|' + timestamp + '|Federal.LOL').replace(/=/g, '');
-            const formattedKey = key.match(/.{1,4}/g).join('-');
+            const keyData = userHWID + '|' + timestamp + '|FEDERAL.LOL.v3';
+            const baseKey = btoa(keyData).replace(/=/g, '');
+            
+            // Format key nicely
+            const formattedKey = 'FEDERAL-' + baseKey.substring(0, 4) + '-' + 
+                                baseKey.substring(4, 8) + '-' + 
+                                baseKey.substring(8, 12) + '-' + 
+                                baseKey.substring(12, 16);
             
             document.getElementById('generatedKey').textContent = formattedKey;
             document.getElementById('keyDisplay').style.display = 'block';
             
-            // Store in localStorage for verification
+            // Store key
             localStorage.setItem('federal_key', formattedKey);
-            localStorage.setItem('federal_hwid', hwid);
         }
-
+        
         function verifyKey() {
-            const key = document.getElementById('verifyKeyInput').value;
+            const inputKey = document.getElementById('verifyKeyInput').value.trim().toUpperCase();
             const storedKey = localStorage.getItem('federal_key');
-            const storedHWID = localStorage.getItem('federal_hwid');
-            
             const statusDiv = document.getElementById('verifyStatus');
             
-            if (key === storedKey) {
-                statusDiv.innerHTML = '<div class="status valid">✅ Key is VALID</div>';
+            // Test keys that always work
+            const testKeys = [
+                'FEDERAL-TEST-KEY-123',
+                'FEDERAL-LOL-BETA', 
+                'FEDERAL-FREE-ACCESS'
+            ];
+            
+            if (testKeys.includes(inputKey) || inputKey === storedKey) {
+                statusDiv.innerHTML = '<div class="status valid">✅ Key is VALID - Ready to use!</div>';
             } else {
-                statusDiv.innerHTML = '<div class="status invalid">❌ Key is INVALID</div>';
+                statusDiv.innerHTML = '<div class="status invalid">❌ Key is INVALID - Please generate a new key</div>';
             }
         }
-
-        // Load stored data
+        
+        // Load saved data on page load
         window.onload = function() {
-            const storedHWID = localStorage.getItem('federal_hwid');
-            if (storedHWID) {
-                document.getElementById('hwidInput').value = storedHWID;
+            const savedHWID = localStorage.getItem('federal_hwid');
+            if (savedHWID) {
+                userHWID = savedHWID;
+                document.getElementById('hwidText').textContent = userHWID;
+                document.getElementById('hwidDisplay').style.display = 'block';
+                document.getElementById('generateKeyBtn').disabled = false;
+            }
+            
+            const savedKey = localStorage.getItem('federal_key');
+            if (savedKey) {
+                document.getElementById('verifyKeyInput').value = savedKey;
             }
         }
     </script>
