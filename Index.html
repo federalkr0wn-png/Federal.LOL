@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Federal.LOL Key System</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #0c0c0c, #1a1a2e);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: rgba(30, 30, 46, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #444;
+            box-shadow: 0 0 20px rgba(0, 100, 255, 0.3);
+        }
+        input, button {
+            padding: 12px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        input {
+            width: 80%;
+            background: #1e1e2e;
+            color: white;
+            border: 1px solid #444;
+        }
+        button {
+            background: linear-gradient(45deg, #0066ff, #0099ff);
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #0099ff, #0066ff);
+            transform: translateY(-2px);
+        }
+        .key {
+            background: #2a2a3a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            border: 1px solid #444;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .valid { background: #1a3a1a; border: 1px solid #2a8a2a; }
+        .invalid { background: #3a1a1a; border: 1px solid #8a2a2a; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Federal.LOL Key System</h1>
+        <p>Generate your access key below:</p>
+        
+        <div>
+            <input type="text" id="hwidInput" placeholder="Enter HWID (from console)" readonly>
+            <button onclick="generateKey()">Generate Key</button>
+        </div>
+        
+        <div id="keyDisplay" style="display: none;">
+            <h3>Your Key:</h3>
+            <div class="key" id="generatedKey"></div>
+            <p>Copy this key and use it in the script</p>
+        </div>
+
+        <div>
+            <h3>Verify Key:</h3>
+            <input type="text" id="verifyKeyInput" placeholder="Paste key to verify">
+            <button onclick="verifyKey()">Verify Key</button>
+            <div id="verifyStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simple key generation using HWID + timestamp
+        function generateKey() {
+            const hwid = document.getElementById('hwidInput').value;
+            if (!hwid) {
+                alert('Please get HWID from script first');
+                return;
+            }
+            
+            const timestamp = Date.now();
+            const key = btoa(hwid + '|' + timestamp + '|Federal.LOL').replace(/=/g, '');
+            const formattedKey = key.match(/.{1,4}/g).join('-');
+            
+            document.getElementById('generatedKey').textContent = formattedKey;
+            document.getElementById('keyDisplay').style.display = 'block';
+            
+            // Store in localStorage for verification
+            localStorage.setItem('federal_key', formattedKey);
+            localStorage.setItem('federal_hwid', hwid);
+        }
+
+        function verifyKey() {
+            const key = document.getElementById('verifyKeyInput').value;
+            const storedKey = localStorage.getItem('federal_key');
+            const storedHWID = localStorage.getItem('federal_hwid');
+            
+            const statusDiv = document.getElementById('verifyStatus');
+            
+            if (key === storedKey) {
+                statusDiv.innerHTML = '<div class="status valid">✅ Key is VALID</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="status invalid">❌ Key is INVALID</div>';
+            }
+        }
+
+        // Load stored data
+        window.onload = function() {
+            const storedHWID = localStorage.getItem('federal_hwid');
+            if (storedHWID) {
+                document.getElementById('hwidInput').value = storedHWID;
+            }
+        }
+    </script>
+</body>
+</html>
